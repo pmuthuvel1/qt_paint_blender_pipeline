@@ -189,6 +189,9 @@ void ScribbleArea::drawLineTo(const QPoint &endPoint)
     update(QRect(lastPoint, endPoint).normalized()
                                      .adjusted(-rad, -rad, +rad, +rad));
     lastPoint = endPoint;
+
+    //call blender Addon Socket server from here
+
 }
 //! [18]
 
