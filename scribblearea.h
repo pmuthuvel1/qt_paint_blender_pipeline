@@ -55,7 +55,7 @@
 #include <QImage>
 #include <QPoint>
 #include <QWidget>
-
+#include <QTcpSocket>
 //! [0]
 class ScribbleArea : public QWidget
 {
@@ -72,6 +72,9 @@ public:
     bool isModified() const { return modified; }
     QColor penColor() const { return myPenColor; }
     int penWidth() const { return myPenWidth; }
+
+    void connectToBlendServerSocket(QString host ,int port);
+    void closeSocket();
 
 public slots:
     void clearImage();
@@ -94,6 +97,11 @@ private:
     QColor myPenColor = Qt::blue;
     QImage image;
     QPoint lastPoint;
+
+    QTcpSocket *socket;
+    bool isSocketConnected = false ;
+
+    void sendXYZcoordinatesToBlendServer(int x1 , int y1, int x2, int y2 , int z);
 };
 //! [0]
 

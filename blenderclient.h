@@ -2,7 +2,7 @@
 #define BLENDERCLIENT_H
 #include <QtCore>
 #include <QtNetwork>
-
+#include <QString>
 
 class BlenderClient : public QObject
 {

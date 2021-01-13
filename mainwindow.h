@@ -53,6 +53,9 @@
 
 #include <QList>
 #include <QMainWindow>
+#include <QString>
+#include <blenderclient.h>
+
 
 class ScribbleArea;
 
@@ -63,6 +66,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -96,6 +100,10 @@ private:
     QAction *clearScreenAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+
+
+
+
 };
 //! [0]
 

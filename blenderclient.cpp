@@ -9,7 +9,7 @@ BlenderClient::BlenderClient(QObject *parent) : QObject(parent)
 
 bool BlenderClient::connectToHost(QString host)
 {
-    socket->connectToHost(host, 1024);
+    socket->connectToHost(host, 5555);
     return socket->waitForConnected();
 }
 

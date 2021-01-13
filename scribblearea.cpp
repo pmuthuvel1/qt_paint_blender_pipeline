@@ -65,6 +65,23 @@
 ScribbleArea::ScribbleArea(QWidget *parent)
     : QWidget(parent)
 {
+    //QString host = "127.0.0.1";
+    //int port = 5555;
+    //connectToBlendServerSocket( host , port);
+
+    //bool connected = (socket->state() == QTcpSocket::ConnectedState);
+
+    if(!isSocketConnected) {
+
+        socket = new QTcpSocket(this);
+
+        QString host = "127.0.0.1";
+        int port = 5555;
+
+        socket->connectToHost(host, port);
+    }
+
+
     setAttribute(Qt::WA_StaticContents);
 }
 //! [0]
@@ -188,6 +205,9 @@ void ScribbleArea::drawLineTo(const QPoint &endPoint)
     int rad = (myPenWidth / 2) + 2;
     update(QRect(lastPoint, endPoint).normalized()
                                      .adjusted(-rad, -rad, +rad, +rad));
+
+    sendXYZcoordinatesToBlendServer(lastPoint.x(),lastPoint.y(),endPoint.x(),endPoint.y(),rad);
+
     lastPoint = endPoint;
 
     //call blender Addon Socket server from here
@@ -230,3 +250,74 @@ void ScribbleArea::print()
 #endif // QT_CONFIG(printdialog)
 }
 //! [22]
+
+
+/**
+ * @brief MainWindow::connectToBlendServerSocket
+ */
+
+void ScribbleArea::connectToBlendServerSocket(QString host ,int port){
+    try {
+
+
+        socket = new QTcpSocket(this);
+
+        socket->connectToHost(host, port);
+
+        if(socket->waitForConnected(5000))
+        {
+            qDebug() << "Exception while connecting to the Blender Python Server.\n";
+        }
+    }
+    catch (...) {
+      qDebug() << "Exception while connecting to the Blender Python Server.\n";
+    }
+}
+
+/**
+ * @brief MainWindow::sendXYZtoBlendServer - method to send
+ * @param x
+ * @param y
+ * @param z
+ */
+void ScribbleArea::sendXYZcoordinatesToBlendServer(int x1 , int y1, int x2, int y2 , int z){
+
+    try {
+
+        isSocketConnected = (socket->state() == QTcpSocket::ConnectedState);
+
+        QString isSocCon = "false";
+        if(isSocketConnected){
+            isSocCon = "true";
+        }
+        qDebug() << " connected "+isSocCon;
+
+        if(socket->waitForConnected(5000))
+        {
+            qDebug() << "Connected!";
+
+            const char *ps ;
+            std::string  msg = " x1="+std::to_string(x1)+" y1="+ std::to_string(y1)+" x2="+std::to_string(x1)+" y2="+ std::to_string(y1) +" z="+std::to_string(z)+"\n\n";
+            ps = &msg[0];
+            socket->write(ps);
+            socket->waitForBytesWritten(1000);
+
+            //socket->close();
+            //qDebug() << "socket connection closed ";
+        }
+        else
+        {
+            qDebug() << "Not connected!";
+        }
+    }  catch (...) {
+        qDebug() << "Exception occured while sending coordinates to Blender Python Server Socket!";
+    }
+}
+
+
+
+void ScribbleArea::closeSocket(){
+
+    socket->close();
+    qDebug() << "socket connection closed ";
+}

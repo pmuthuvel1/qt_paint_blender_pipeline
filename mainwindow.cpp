@@ -82,6 +82,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->accept();
     else
         event->ignore();
+
+    //close the socket connection
+    scribbleArea->closeSocket();
 }
 //! [2]
 
@@ -262,3 +265,4 @@ bool MainWindow::saveFile(const QByteArray &fileFormat)
     return scribbleArea->saveImage(fileName, fileFormat.constData());
 }
 //! [20]
+
